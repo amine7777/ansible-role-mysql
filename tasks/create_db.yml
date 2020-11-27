@@ -1,0 +1,23 @@
+---
+- name: Create Users
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    host: "{{ item.host }}"
+    priv: "{{ item.priv }}" 
+    state: "{{ item.state }}"
+  with_items: "{{ mysql_users }}"
+  changed_when: false
+  when: mysql_users is defined
+
+- name: Create Databases
+  mysql_db:
+    login_user: "{{ item.login_user }}"
+    login_password: "{{ item.login_password }}"
+    db: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ mysql_databases }}"
+  changed_when: false
+  when: mysql_databases is defined

@@ -1,0 +1,24 @@
+---
+- name: Update Debian
+  apt:
+    upgrade: yes
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+
+- name: Update RedHat
+  package:
+    name: epel-release
+    state: present
+  when:
+    - not ansible_distribution == 'Fedora'
+    - ansible_os_family == 'RedHat'
+
+- name: Install dnf-automatic
+  dnf:
+    name: dnf-automatic
+  register: install_dnf_automatic
+  until: install_dnf_automatic.rc == 0
+  retries: 20
+  delay: 0
+  when: ansible_distribution == 'Fedora'

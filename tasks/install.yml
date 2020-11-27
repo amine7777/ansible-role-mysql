@@ -1,0 +1,57 @@
+---
+- name: Install mysql for Debian
+  apt:
+    name:
+      - software-properties-common
+      - python3-mysqldb
+      - mysql-client
+      - mysql-server
+    state: present
+  changed_when: false
+  when: ansible_os_family == "Debian"
+
+- name: Install mysql for Centos dists
+  block:
+    - name: Insall mysql for Centos
+      yum:
+        name: 
+          - mysql
+          - mysql-server
+          - MySQL-python
+        state: present
+      changed_when: false
+      when: not ansible_distribution_major_version == "8"
+    
+    - name: Insall mysql for Centos 8
+      yum:
+        name: 
+          - mysql
+          - mysql-server
+          - MySQL-python3
+        state: present
+      changed_when: false
+      when: ansible_distribution_major_version == "8"
+  when: ansible_distribution == "CentOS"
+
+- name: Insall mysql for Fedora dists
+  yum:
+    name: 
+      - mysql
+      - mysql-server
+      - MySQL-python3
+    state: present
+  when: ansible_distribution == "Fedora"
+  changed_when: false
+
+- name: Enable mysql
+  systemd:
+    service: mysql
+    enabled: yes
+  changed_when: false
+
+- name: Start mysql
+  systemd:
+    service: mysql
+    state: started
+  changed_when: false
+  notify: Restart mysql

@@ -1,0 +1,16 @@
+---
+# defaults file for mysql
+mysql_root_password: changemeplease
+     
+mysql_users:
+  - name: john
+    password: doe
+    host: localhost
+    priv: "mydatabase.*:ALL"
+    state: present
+
+mysql_databases:
+  - name: mydatabase
+    login_user: john
+    login_password: doe
+    state: present

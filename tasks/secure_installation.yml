@@ -1,0 +1,44 @@
+---
+### SECURE_INSTALLATION ###
+
+- name: Set the root password
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    login_host: localhost
+    check_implicit_admin: yes
+    user: root
+    password: "{{ mysql_root_password }}"
+    state: present
+  changed_when: false
+
+- name: Removing root remote access IPv6 IPv4 localhost
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    user: "root"
+    password: "{{ mysql_root_password }}"
+    host: "{{ item }}"
+  with_items:
+    - '{{ ansible_hostname }}'
+    - ::1
+    - 127.0.0.1
+    - localhost
+  changed_when: false
+
+- name: Deletes anonymous server user
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    user: ""
+    password: "{{ mysql_root_password }}"
+    state: absent
+  changed_when: false
+
+- name: Removing the test database
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    db: test
+    state: absent
+  changed_when: false

@@ -1,0 +1,7 @@
+---
+# handlers file for mysql
+- name: Restart mysql
+  systemd:
+    service: mysql
+    state: restarted
+  changed_when: false

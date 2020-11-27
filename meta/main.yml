@@ -1,0 +1,28 @@
+---
+dependencies: []
+galaxy_info:
+  author: Amine Kahlaoui
+  role_name: mysql
+  description: This role helps you to install mysql on your linux machine.
+  issue_tracker_url: https://github.com/amine7777/ansible-role-mysql/issues
+  company: https://www.cf2a.tv
+  license: Apache-2.0
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - mysql
+    - database
+    - mysql
+    - sql

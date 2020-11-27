@@ -1,0 +1,15 @@
+---
+# tasks file for mysql
+
+- name: Update OS
+  include: update_os.yml
+
+- name: Install mysql
+  include: install.yml
+
+- name: Secure installation
+  include: secure_installation.yml
+
+- name: Create users and databases
+  include: create_db.yml
+  
