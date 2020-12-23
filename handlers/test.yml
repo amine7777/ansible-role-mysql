@@ -1,0 +1,115 @@
+---
+
+- name: Update RedHat
+  package:
+    name: epel-release
+    state: present
+
+# - name: Get YUM repository for MySQL
+#   command: https://repo.mysql.com/mysql80-community-release-el7-3.noarch.rpm
+    
+# - name: Install YUM repository for MySQL
+#   command: sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/mysql-community.repo
+
+# - name: Insall mysql for centos dists
+#   yum:
+#     enablerepo: mysql80-community 
+#     name: 
+#       - mysql-community-server
+#     state: present
+
+- name: Install MySQL 8 repo
+  yum: name=https://repo.mysql.com/mysql80-community-release-el7-3.noarch.rpm state=present
+
+- name: Install MySQL 8
+  yum: pkg={{ item }}
+  with_items:
+    - mysql-community-server
+    - mysql-community-client
+    - MySQL-python
+
+- name: Enable mysql
+  systemd:
+    service: mysqld
+    enabled: yes
+  changed_when: false
+
+- name: Start mysql
+  systemd:
+    service: mysqld
+    state: started
+  changed_when: false
+  notify: Restart mysql
+
+  #secure
+- name: Get temporary MySQL root password
+  shell: grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}'
+  register: mysql_root_temp_password
+
+- name: Set the MySQL root password
+  shell: mysqladmin -u root --password="{{ mysql_root_temp_password.stdout }}" password "{{ mysql_root_password }}"
+  register: mysql_admin_root_password_result
+  failed_when: "'(using password: NO)' in mysql_admin_root_password_result.stderr"
+
+# - name: Tune MySQL configuration
+#   template:
+#     src: my.cnf
+#     dest: /etc/my.cnf
+#     mode: 0644
+#   notify:
+#     - Restart mysql
+
+# - name: Removing root remote access IPv6 IPv4 localhost
+#   mysql_user:
+#     login_user: root
+#     login_password: "{{ mysql_root_password }}"
+#     user: "root"
+#     password: "{{ mysql_root_password }}"
+#     host: "{{ item }}"
+#   with_items:
+#     - '{{ ansible_hostname }}'
+#     # - ::1
+#     # - 127.0.0.1
+#     # - localhost
+#   changed_when: false
+
+# - name: Deletes anonymous server user
+#   mysql_user:
+#     login_user: root
+#     login_password: "{{ mysql_root_password }}"
+#     user: ""
+#     password: "{{ mysql_root_password }}"
+#     state: absent
+#   changed_when: false
+
+# - name: Removing the test database
+#   mysql_db:
+#     login_user: root
+#     login_password: "{{ mysql_root_password }}"
+#     db: test
+#     state: absent
+#   changed_when: false
+
+  #Create
+- name: Create Users
+  mysql_user:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    host: "{{ item.host }}"
+    priv: "{{ item.priv }}" 
+    state: "{{ item.state }}"
+  with_items: "{{ mysql_users }}"
+  changed_when: false
+  when: mysql_users is defined
+
+- name: Create Databases
+  mysql_db:
+    login_user: "{{ item.login_user }}"
+    login_password: "{{ item.login_password }}"
+    db: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items: "{{ mysql_databases }}"
+  changed_when: false
+  when: mysql_databases is defined
