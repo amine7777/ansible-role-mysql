@@ -1,10 +1,26 @@
 ---
+
+- name: Install mysql for Debian
+  get_url:
+    url: "{{ mysql_debian_url }}"
+    dest: "/tmp/{{ mysql_package_name }}"
+  changed_when: false
+  when: ansible_os_family == "Debian"
+
+- name: Install mysql-common
+  command: dpkg -i /tmp/{{ mysql_package_name }}
+
+- name: Install mysql-common
+  apt:
+    name: 
+      - mysql-server
+    state: present
+  changed_when: false
+
 - name: Install mysql for Debian
   apt:
-    name:
-      - software-properties-common
-      - python3-mysqldb
-      - mysql-client
+    name: 
+      - mysql-common
       - mysql-server
     state: present
   changed_when: false
@@ -45,13 +61,13 @@
 
 - name: Enable mysql
   systemd:
-    service: mysql
+    service: mysqls
     enabled: yes
   changed_when: false
 
 - name: Start mysql
   systemd:
-    service: mysql
+    service: mysqld
     state: started
   changed_when: false
   notify: Restart mysql
