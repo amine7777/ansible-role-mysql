@@ -2,6 +2,7 @@
 # handlers file for mysql
 - name: Restart mysql
   systemd:
-    service: mysql
+    service: mysqld
     state: restarted
   changed_when: false
+  when: ansible_distribution == 'Centos'

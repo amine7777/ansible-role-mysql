@@ -6,6 +6,8 @@ mysql_arch: amd64
 mysql_package_name: libmysqlclient21_{{ mysql_version }}.{{ mysql_version_minor }}-1{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}_{{ mysql_arch }}.deb
 mysql_debian_url: 'https://dev.mysql.com/get/Downloads/MySQL-{{ mysql_version }}/{{ mysql_package_name }}'
 
+# CENTOS 
+mysql_centos_url: https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
 # defaults file for mysql
 mysql_root_password: changemeplease
      
