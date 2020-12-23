@@ -61,11 +61,11 @@
 
 - name: Enable mysql
   systemd:
-    service: mysqls
+    service: mysqld
     enabled: yes
   changed_when: false
 
-- name: Start mysql
+- name: Start mysqld
   systemd:
     service: mysqld
     state: started
