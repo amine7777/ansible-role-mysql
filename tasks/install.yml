@@ -31,7 +31,7 @@
     - name: Insall mysql for Centos
       yum:
         name: 
-          - mysql_centos_url
+          - "{{ mysql_centos_url }}"
           - MySQL-python
         state: present
       changed_when: false
